@@ -6,12 +6,14 @@
 #include <string>
 #include <cmath>
 #include <ctime>
+#include <unistd.h>
 
 #include "Letter.hpp"
 
 #define LIVES 6
 #define GREEN "\e[92m"
 #define YELLOW "\e[93m"
+#define RED "\e[91m"
 #define GREY "\e[90m"
 #define RESET "\e[0m"
 #define CLR_LAST_LINE "\e[1A\e[K"
@@ -27,6 +29,12 @@ bool isWordKnown(std::vector<std::string> &refList, const std::string &word)
     return false;
 }
 
+/**
+ *
+ * @param list: the file converted into a container (for limits the i/o operations)
+ * @param funMode: false=1word/day; true=1word/launch
+ * @return a random picked word from the ref file
+ */
 const std::string &getRandomWord(std::vector<std::string> &list, bool funMode)
 {
     std::time_t t = std::time(0);   // get time now
@@ -124,7 +132,7 @@ void checkLetters(const std::string &pword, const std::string &target) {
 
 int main() {
     std::vector<std::string> dic;
-    std::ifstream is(R"(C:\Users\sansh\CLionProjects\wordle\words.txt)");
+    std::ifstream is("words.txt");
     std::string line;
     std::string wordOfTheDay;
     int playerLives = LIVES;
@@ -166,12 +174,13 @@ int main() {
                 return 0;
             }
             --playerLives;
-            std::cout << "\nTr" << (playerLives > 1? "ies": "y") << " remaining: " <<  playerLives << std::endl;
+            std::cout << " [" RED "♥ " RESET <<  playerLives << "]" << std::endl;
         }
         else
-            std::cout << line << " doesn't exists in our dictionary :(" << std::endl;
-        std::cout << std::endl;
+        {
+            std::cout << CLR_LAST_LINE << RED + line + RESET << std::endl;
+        }
     }
-    std::cout << "You loose :'(\nIt was: " << wordOfTheDay;
+    std::cout << "You loose :'(\nIt was: " << wordOfTheDay << std::endl;
     return 0;
 }

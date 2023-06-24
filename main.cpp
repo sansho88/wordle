@@ -7,6 +7,8 @@
 #include <cmath>
 #include <ctime>
 
+#include "Letter.hpp"
+
 #define LIVES 6
 #define GREEN "\e[92m"
 #define YELLOW "\e[93m"
@@ -14,11 +16,7 @@
 #define RESET "\e[0m"
 #define CLR_LAST_LINE "\e[1A\e[K"
 
-typedef enum {
-    NONE,
-    INWORD,
-    CORRECT
-} e_state;
+
 
 bool isWordKnown(std::vector<std::string> &refList, const std::string &word)
 {
@@ -43,18 +41,76 @@ std::string paintLetter(char c, const std::string &color)
     return result;
 }
 
-void getNbCommonLetters(const std::string &pword, const std::string &target) {
-    static std::map<char, int> wrongLetters;
+bool isAtCorrectPlace(char c, size_t cpos, const std::string &target){
+    return target.at(cpos) == c;
+}
 
-    for (int i = 0; i < pword.length(); ++i) {
-        if (pword.at(i) == target.at(i))
-            std::cout << paintLetter(pword.at(i), GREEN);
-        else if (target.find(pword.at(i)) != std::string::npos)
-            std::cout << paintLetter(pword[i], YELLOW) ;
+bool isThereAnOtherLetterToFind(char target, std::map<size_t,Letter> &letters) {
+    std::map<size_t,Letter>::iterator it = letters.begin();
+    for (; it != letters.end(); ++it)
+    {
+        Letter l = it->second;
+        if (target == l.getC() && l.getState() != Letter::e_state::CORRECT)
+            return true;
+    }
+
+    return false;
+}
+
+std::map<size_t , Letter> getLettersAtCorrectPlace(const std::string &pword, const std::string &target){
+    std::map<size_t , Letter> result;
+    for (size_t i = 0; i < pword.length(); ++i) {
+        result.insert(
+                std::pair<size_t, Letter>(
+                        i, Letter(pword[i], isAtCorrectPlace(pword[i], i, target) * Letter::e_state::CORRECT)
+                )
+        );
+    }
+    return result;
+}
+
+size_t getNb1LetterTarget(char c, const std::string &target) {
+    size_t result = 0;
+    for (char letter: target) {
+        result += (letter == c);
+    }
+    return result;
+}
+
+size_t getNbSameLettersFound(char c, std::map<size_t , Letter> &checked) {
+    size_t result = 0;
+    std::map<size_t , Letter>::iterator it = checked.begin();
+    for (; it != checked.end(); ++it) {
+        if (it->second.getC() == c && it->second.getState() != Letter::e_state::NONE)
+            ++result;
+    }
+    return result;
+}
+
+void checkLetters(const std::string &pword, const std::string &target) {
+    static std::map<char, int> wrongLetters;
+    std::map<size_t , Letter> checked = getLettersAtCorrectPlace(pword, target);
+
+    std::map<size_t , Letter>::iterator checkedIt = checked.begin();
+
+    for (size_t pos = 0; checkedIt != checked.end() ; ++checkedIt, ++pos) {
+        char c = checkedIt->second.getC();
+        const Letter::e_state state = checkedIt->second.getState();
+        size_t nbOfC = getNb1LetterTarget(c, target);
+        size_t cLeftToFind = nbOfC - getNbSameLettersFound(c, checked);
+
+        if (state == Letter::e_state::CORRECT)
+            std::cout << paintLetter(c, GREEN);
+        else if (target.find(checked.at(pos).getC()) != std::string::npos &&
+            (isThereAnOtherLetterToFind(c, checked)) && cLeftToFind != 0)
+        {
+            checkedIt->second.setState(Letter::e_state::INWORD);
+            std::cout << paintLetter(c, YELLOW);
+        }
         else
         {
-            std::cout << paintLetter(pword[i], GREY);
-            wrongLetters[pword[i]];
+            std::cout << paintLetter(c, GREY);
+            wrongLetters[c];
         }
     }
     std::cout << GREY " (All Wrong Letters tried: ";
@@ -86,7 +142,7 @@ int main() {
     }
     wordOfTheDay = getRandomWord(dic, true);
     line.clear();
-    while (playerLives >= 0 && std::getline(std::cin, line))
+    while (playerLives > 0 && std::getline(std::cin, line))
     {
         if (line.empty())
             break;
@@ -97,17 +153,12 @@ int main() {
         }
         for (size_t i = 0; i < line.length(); ++i)
             line.at(i) = (char)std::tolower(line.at(i));
-        /*todo:
-         * 1- détecter le nombre de lettres communes au mot et à la target
-         * 2- détecter si la position de certaines lettres du mot correspond à celle des lettres de la target
-         * 3- compter le nombre d'essais du joueur
-         * 4- colorer les lettres en fonction de leur justesse*/
         if (isWordKnown(dic, line))
         {
             if (line != wordOfTheDay)
             {
                 std::cout << CLR_LAST_LINE;
-                getNbCommonLetters(line, wordOfTheDay);
+                checkLetters(line, wordOfTheDay);
             }
             else
             {

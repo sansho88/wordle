@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <map>
@@ -132,7 +133,7 @@ void checkLetters(const std::string &pword, const std::string &target) {
 
 int main() {
     std::vector<std::string> dic;
-    std::ifstream is("words.txt");
+    std::ifstream is("words.txt"); //todo: parametre
     std::string line;
     std::string wordOfTheDay;
     int playerLives = LIVES;
@@ -156,7 +157,9 @@ int main() {
             break;
         if (line.length() != 5)
         {
-            std::cerr << "Wrong amount of letters" << std::endl;
+            std::cerr << CLR_LAST_LINE << RED + line + RESET << "(Wrong amount of letters)" << std::endl;
+            sleep(1);
+            std::cout << CLR_LAST_LINE;
             continue;
         }
         for (size_t i = 0; i < line.length(); ++i)
@@ -170,7 +173,7 @@ int main() {
             }
             else
             {
-                std::cout << GREEN << "CONGRATULATIONS !!!\n" << RESET;
+                std::cout << CLR_LAST_LINE << GREEN + line << "\t CONGRATULATIONS !!!\n" << RESET;
                 return 0;
             }
             --playerLives;
@@ -179,6 +182,8 @@ int main() {
         else
         {
             std::cout << CLR_LAST_LINE << RED + line + RESET << std::endl;
+            sleep(1);
+            std::cout << CLR_LAST_LINE;
         }
     }
     std::cout << "You loose :'(\nIt was: " << wordOfTheDay << std::endl;

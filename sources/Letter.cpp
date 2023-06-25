@@ -34,3 +34,4 @@ Letter::e_state Letter::getState() const{
 void Letter::setState(Letter::e_state state) {
     Letter::state = state;
 }
+

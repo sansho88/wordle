@@ -31,7 +31,14 @@ public:
     char getC() const;
     e_state getState() const;
 
+};
 
+struct comp
+{
+    bool operator()(const Letter &let1, const Letter &let2) const
+    {
+        return (let1.getC() == let2.getC());
+    }
 };
 
 

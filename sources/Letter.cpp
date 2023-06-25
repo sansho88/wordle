@@ -2,7 +2,7 @@
 // Created by sansh on 24/06/2023.
 //
 
-#include "Letter.hpp"
+#include "../includes/Letter.hpp"
 
 Letter::Letter() = default;
 

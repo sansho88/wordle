@@ -45,7 +45,7 @@ bool	closeError(std::ifstream *inputStream, std::string msg)
     return false;
 }
 
-bool    parseDict(std::ifstream *is, std::vector<std::string> &dic)
+bool    parseDict(std::ifstream *is, std::vector<std::string> &dic, const std::string &path)
 {
     std::string line;
     struct stat fileStat;
@@ -56,8 +56,8 @@ bool    parseDict(std::ifstream *is, std::vector<std::string> &dic)
         std::cerr << "Error: Could not open dictionnary" << std::endl;
         return (false);
     }
-    else if (!(stat("./words.txt", &fileStat) == 0 && S_ISREG(fileStat.st_mode)))
-        return (closeError(is, "Error: ./words.txt is not a regular file"));
+    else if (!(stat(path.c_str(), &fileStat) == 0 && S_ISREG(fileStat.st_mode)))
+        return (closeError(is, "Error: " + path + " is not a regular file"));
     while(std::getline(*is, line))
     {
         dictSize++;
@@ -79,6 +79,8 @@ bool    parseDict(std::ifstream *is, std::vector<std::string> &dic)
         return (closeError(is, "Error: dictionnary has less than " + std::to_string(MIN_DICT_SIZE) + " entries"));
     else if (!is->eof() && !is->good())
 		return (closeError(is, "Error: error while reading dictionnary file"));
+    else if (dic.empty())
+        return (closeError(is, "Error: dictionnary is empty"));
     is->close();
     return (true);
 }
@@ -90,7 +92,7 @@ int main(int argc, char *argv[]) {
         dicPath = argv[1];
     std::ifstream is(dicPath);
 
-    if (!parseDict(&is, dic))
+    if (!parseDict(&is, dic, dicPath))
         return 2;
     printWelcome();
     printRules(dic.size());

@@ -111,22 +111,26 @@ void checkLetters(const std::string &pword, const std::string &target) {
     std::cout << ")" RESET;
 }
 
+bool    parseDict(std::ifstream *is, std::vector<std::string> &dic)
+{
+    std::string line;
+
+    if (!is->is_open())
+        return (false);
+    while(std::getline(*is, line))
+        dic.push_back(line);
+    return (true);
+}
+
 int main() {
     std::vector<std::string> dic;
     std::ifstream is("words.txt"); //todo: parametre
     std::string line;
     std::string wordOfTheDay;
     int playerLives = LIVES;
-    if (is.is_open())
+    if (!parseDict(&is, dic))
     {
-        while (std::getline(is, line))
-            dic.push_back(line);
-        std::cerr << "words in the dic: " << dic.size() << std::endl;
-        is.close();
-    }
-    else
-    {
-        std::cerr << "Error: No dictionary found" << std::endl;
+        std::cerr << "Error: BAD DICT" << std::endl;
         return 2;
     }
     wordOfTheDay = getRandomWord(dic, true);
@@ -135,7 +139,7 @@ int main() {
     {
         if (line.empty())
             break;
-        if (line.length() != 5)
+        if (line.length() != WORD_SIZE)
         {
             std::cerr << CLR_LAST_LINE << RED + line + RESET << "(Wrong amount of letters)" << std::endl;
             sleep(1);

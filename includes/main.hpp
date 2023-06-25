@@ -13,6 +13,7 @@
 
 // UTILS
 # define LIVES 6
+# define WORD_SIZE 5
 
 // DISPLAY
 # define GREEN "\e[92m"

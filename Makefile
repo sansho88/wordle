@@ -1,6 +1,6 @@
 #update on every project
 NAME := wordle
-LST_SRC :=	main Letter
+LST_SRC :=	main Letter Game
 
 #update to match c or cpp
 CC := c++

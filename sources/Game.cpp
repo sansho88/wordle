@@ -168,7 +168,7 @@ void Game::play() {
             std::cout << CLR_LAST_LINE;
             pstate = false;
         }
-        if (line.length() != LIVES - 1)
+        if (line.length() != WORD_SIZE)
         {
             rewriteLine(line + " (Wrong amount of letters)", RED, true);
             pstate = printKeyboard();

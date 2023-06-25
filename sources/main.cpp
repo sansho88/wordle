@@ -28,7 +28,7 @@ void	printRules(unsigned long dictSize)
 	std::cout << std::endl << std::endl;
 	std::cout << "RULES OF THE GAME:" << std::endl << std::endl;
 	std::cout << "0#   find the WORDLE" << std::endl << std::endl;
-	std::cout << "1#   " << WORD_SIZE + 1 << " guesses to find the WORDLE" << std::endl;
+	std::cout << "1#   " << LIVES << " guesses to find the WORDLE" << std::endl;
 	std::cout << "2#   you can only enter " << WORD_SIZE <<" letters WORDLES" << std::endl;
 	std::cout << "3#   the letters can only be lowercase" << std::endl;
 	std::cout << "4#   a "<< GREEN "GREEN" RESET << " letter means it is valid and at the right place in the WORDLE" << std::endl;

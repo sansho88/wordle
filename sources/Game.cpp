@@ -186,7 +186,7 @@ void Game::play() {
             else
             {
                 rewriteLine(line + "\t CONGRATULATIONS !!!\n", GREEN, false);
-                exit(0);
+                return;
             }
             --lives;
             std::cout << " [" RED "♥ " RESET <<  lives << "]" << std::endl;

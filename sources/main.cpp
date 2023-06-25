@@ -66,7 +66,7 @@ bool    parseDict(std::ifstream *is, std::vector<std::string> &dic, const std::s
 			return (closeError(is, "Error: fail while reading"));
 		else if (dictSize > MAX_DICT_SIZE)
 			return (closeError(is, "Error: dictionnary has more than " + std::to_string(MAX_DICT_SIZE) + " entries"));
-		else if (line.size() != 5)
+		else if (line.size() != WORD_SIZE)
 			return (closeError(is, "Error: dictionnary entry " + std::to_string(dictSize) + " does not have a length of " + std::to_string(WORD_SIZE)));
 		for (unsigned int i = 0; i < line.size(); i++)
 		{

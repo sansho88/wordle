@@ -10,6 +10,7 @@
 
 class Game {
     size_t lives;
+    bool funMode;
     std::string wordOfTheDay;
     std::vector<std::string> dictionary;
 
@@ -25,7 +26,7 @@ class Game {
 
 public:
     Game();
-    Game(size_t lives, std::vector<std::string> dictionary);
+    Game(size_t lives, bool funMode, std::vector<std::string> dictionary);
     ~Game();
 
     void play();

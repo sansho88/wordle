@@ -8,7 +8,8 @@ Game::Game() {
 
 }
 
-Game::Game(size_t lives, std::vector<std::string> dictionary) : lives(lives), dictionary(dictionary) {}
+Game::Game(size_t lives, bool funMode, std::vector<std::string> dictionary)
+        : lives(lives),  funMode(funMode), dictionary(dictionary) {}
 
 Game::~Game() {
 
@@ -120,7 +121,7 @@ const std::string &Game::getRandomWord(std::vector<std::string> &list, bool funM
 {
     std::time_t t = std::time(0);   // get time now
     std::tm* now = std::localtime(&t);
-    int todayTime = now->tm_yday + now->tm_mon + now->tm_year + (now->tm_min * now->tm_sec * funMode * rand());
+    int todayTime = now->tm_yday + now->tm_mon * now->tm_year + (now->tm_min * now->tm_sec * funMode * rand());
     return (list.at(todayTime % list.size() ));
 }
 
@@ -136,7 +137,7 @@ void Game::rewriteLine(const std::string &line, const std::string &color, bool i
 
 void Game::play() {
     std::string line;
-    wordOfTheDay = getRandomWord(dictionary, true);
+    wordOfTheDay = getRandomWord(dictionary, funMode);
 
     while (lives > 0 && std::getline(std::cin, line))
     {

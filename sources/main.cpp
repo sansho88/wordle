@@ -1,3 +1,4 @@
+#include <cstring>
 #include "../includes/main.hpp"
 #include "../includes/Letter.hpp"
 #include "../includes/Game.hpp"
@@ -88,15 +89,19 @@ bool    parseDict(std::ifstream *is, std::vector<std::string> &dic, const std::s
 int main(int argc, char *argv[]) {
     std::vector<std::string> dic;
     std::string dicPath = "words.txt";
+    bool funMode = false;
     if (argc == 2)
         dicPath = argv[1];
+    if (argc == 3 && !strcmp(argv[2], "true"))
+        funMode = true;
+
     std::ifstream is(dicPath);
 
     if (!parseDict(&is, dic, dicPath))
         return 2;
     printWelcome();
     printRules(dic.size());
-    Game game(LIVES, dic);
+    Game game(LIVES, funMode, dic);
     game.play();
     return 0;
 }

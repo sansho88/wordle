@@ -13,7 +13,7 @@ class Game {
     bool funMode;
     std::string wordOfTheDay;
     std::vector<std::string> dictionary;
-    std::map<Letter, std::string, comp>   letterColor;
+    std::map<char, Letter::e_state>   letterColor;
 
     bool isWordKnown(std::vector<std::string> &refList, const std::string &word);
     void checkLetters(const std::string &pword, const std::string &target);
@@ -24,7 +24,8 @@ class Game {
     bool isAtCorrectPlace(char c, size_t cpos, const std::string &target);
     std::string paintLetter(char c, const std::string &color, Letter::e_state state);
     void rewriteLine(const std::string &line, const std::string &color, bool isError);
-    void printKeyboard(std::string	str);
+    void printKeyboardColor(std::string	str);
+    bool printKeyboard();
 
 public:
     Game();

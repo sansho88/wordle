@@ -35,9 +35,9 @@ public:
 
 struct comp
 {
-    bool operator()(const Letter &let1, const Letter &let2) const
+    bool operator()(const char &let1, const char &let2) const
     {
-        return (let1.getC() == let2.getC());
+        return (let1 == let2);
     }
 };
 

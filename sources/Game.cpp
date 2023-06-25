@@ -17,24 +17,17 @@ Game::~Game() {
 
 std::string Game::paintLetter(char c, const std::string &color, Letter::e_state state)
 {
-    std::map<Letter, std::string>::iterator itColor;
-    Letter  temp(c);
-    itColor = letterColor.find(temp);
-    std::cout << "letter " << c << std::endl;
+    std::map<char, Letter::e_state>::iterator itColor;
+    itColor = letterColor.find(c);
     if (itColor != letterColor.end())
     {
-        std::cout << __LINE__ << std::endl;
-        if (itColor->first.getState() > state)
-            letterColor[temp] = color;
+        if (itColor->second < state)
+            letterColor[c] = state;
     }
     else
-    {
-        std::cout << __LINE__ << std::endl;
-        letterColor[temp] = color;
-    }
+        letterColor[c] = state;
     itColor = letterColor.end();
     itColor--; 
-    std::cout << "letter " << c << " : " << itColor->first.getC() << " " << itColor->second << "0" << RESET << std::endl;
     std::string result = color + c + RESET;
     return result;
 }
@@ -51,7 +44,6 @@ bool Game::isThereAnOtherLetterToFind(char target, std::map<size_t,Letter> &lett
         if (target == l.getC() && l.getState() != Letter::e_state::CORRECT)
             return true;
     }
-
     return false;
 }
 
@@ -103,7 +95,7 @@ void Game::checkLetters(const std::string &pword, const std::string &target) {
                  (isThereAnOtherLetterToFind(c, checked)) && cLeftToFind != 0)
         {
             checkedIt->second.setState(Letter::e_state::INWORD);
-            std::cout << paintLetter(c, YELLOW, state);
+            std::cout << paintLetter(c, YELLOW, Letter::e_state::INWORD);
         }
         else
         {
@@ -153,22 +145,33 @@ void Game::rewriteLine(const std::string &line, const std::string &color, bool i
     }
 }
 
+bool Game::printKeyboard()
+{
+    printKeyboardColor(" q w e r t y u i o p ");
+	printKeyboardColor("  a s d f g h j k l ");
+	printKeyboardColor("    z x c v b n m");
+    return (true);
+}   
+
 void Game::play() {
     std::string line;
     wordOfTheDay = getRandomWord(dictionary, funMode);
-    printKeyboard(" q w e r t y u i o p ");
-	printKeyboard("  a s d f g h j k l ");
-	printKeyboard("    z x c v b n m");
+    bool pstate = printKeyboard();
     while (lives > 0 && std::getline(std::cin, line))
     {
-        std::cout << CLR_LAST_LINE;
-        std::cout << CLR_LAST_LINE;
-        std::cout << CLR_LAST_LINE;
         if (line.empty())
             break;
+        if (pstate)
+        {
+            std::cout << CLR_LAST_LINE;
+            std::cout << CLR_LAST_LINE;
+            std::cout << CLR_LAST_LINE;
+            pstate = false;
+        }
         if (line.length() != LIVES - 1)
         {
             rewriteLine(line + " (Wrong amount of letters)", RED, true);
+            pstate = printKeyboard();
             continue;
         }
         for (size_t i = 0; i < line.length(); ++i)
@@ -191,23 +194,34 @@ void Game::play() {
         else
         {
             rewriteLine(line, RED, true);
+            pstate = false;
         }
-        printKeyboard(" q w e r t y u i o p ");
-	    printKeyboard("  a s d f g h j k l ");
-	    printKeyboard("    z x c v b n m");
+        if (!pstate)
+            pstate = printKeyboard();
     }
     std::cout << "You loose :'(\nIt was: " << wordOfTheDay << std::endl;
 }
 
-void	Game::printKeyboard(std::string	str)
+void	Game::printKeyboardColor(std::string	str)
 {
 	for(char c : str)
 	{
-        Letter temp(c);
-		if (letterColor.count(temp))
-			std::cout << letterColor[temp] << c << RESET;
-		else
-			std::cout << c;
+		if (letterColor.count(c))
+        {
+            // std::cout << std::endl << c << " state : " << letterColor[c] << std::endl; 
+            switch (letterColor[c]){
+                case Letter::e_state::NONE : 
+                    std::cout << GREY;
+                    break;
+                case Letter::e_state::INWORD :
+                    std::cout << YELLOW;
+                    break;
+                case Letter::e_state::CORRECT :
+                    std::cout << GREEN;
+                    break;
+            }
+        }
+		std::cout << c << RESET;
 	}
 	std::cout << std::endl;
 }
